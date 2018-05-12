@@ -1,0 +1,93 @@
+#sheet {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 400px auto;
+  grid-template-rows: 300px auto;
+  padding-bottom: 100px;
+}
+
+#imgframe {
+  grid-area: 1 / 1 / 1 / 1;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  text-align: center;
+}
+
+#imgframe img {
+  width: 260px;
+  height: 260px;
+  border-radius: 10px;
+}
+
+#ingreds {
+  grid-area: 2 / 1 / 2 / 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+#ingreds h1 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+}
+
+#ingreds input {
+  display: inline;
+}
+
+#ingreds input.amt {
+  width: 50px;
+}
+
+#ingreds input.unit {
+  width: 80px;
+}
+
+#ingreds input.name {
+  width: 180px;
+}
+
+#info {
+  grid-area: 1 / 2 / 1 / 2;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+#recipename {
+  font-size: 24px;
+  width: 80%;
+}
+
+#preparation {
+  grid-area: 2 / 2 / 2 / 2;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+#preparation h1 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+}
+
+#preparation .prepstep {
+  display: flex;
+  align-items: center;
+}
+
+.prepstep + .prepstep {
+  margin-top: 5px;
+}
+
+#preparation .prepstep button {
+  margin-left: 5px;
+  height: 25px;
+  width: 25px;
+}
+
+#preparation textarea.prepdesc {
+  width: 80%;
+  min-height: 40px;
+  resize: vertical;
+}
