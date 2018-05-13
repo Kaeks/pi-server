@@ -1,5 +1,43 @@
 <?php
   require_once 'shared/logic.php';
+
+  if (isset($_POST['submit'])) {
+    $userid = $db->getCurUser() ? $db->getCurUser() : 1;
+    $recipename = $db->escape_string($_POST['recipename']);
+    print_r($_POST);
+
+    $tags = [];
+    $ingredients = [];
+    $preparation = [];
+
+    $i = 0;
+    $j = 0;
+
+    foreach ($_POST as $key => $val) {
+      if (strpos($key, 'tag') !== false) {
+       $tag = $db->escape_string($_POST[$key]);
+       array_push($tags, $val);
+     } elseif (strpos($key, 'amt') !== false) {
+        $num = substr($key, 3);
+        $amt = $db->escape_string($_POST['amt' . $num]);
+        $unit = $db->escape_string($_POST['unit' . $num]);
+        $name = $db->escape_string($_POST['name' . $num]);
+        $ingredients[$i] = array(
+          'amt' => $amt,
+          'unit' => $unit,
+          'name' => $name
+        );
+        $i++;
+      } elseif (strpos($key, 'desc') !== false) {
+        $desc = $db->escape_string($_POST[$key]);
+        $preparation[$j+1] = $desc;
+        $j++;
+      }
+    }
+    $db->newRecipe($userid, $recipename, $tags, $ingredients, $preparation);
+    header('Location: index');
+  }
+
 ?>
 <!doctype html>
 <html>
@@ -46,6 +84,7 @@
           </div>
           <button type='button' id='add-desc' onclick='addDesc()'>+</button>
         </div>
+        <input type='submit' name='submit'/>
     </form>
   </div>
 </body>

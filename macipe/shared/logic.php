@@ -50,29 +50,57 @@ class DatabaseConnection extends mysqli {
 
     echo 'Add Recipe:<br>';
     $addRecipe = @parent::query("INSERT INTO recipe (userid, name, identifier) VALUES ('$userid', '$name', '$ident')");
-    echo $addRecipe ? 'ye<br>' : 'na<br>';
 
-    echo 'Add Tags:<br>';
     foreach ($tags as $tag) {
       $tag = @parent::escape_string($tag);
       $addTag = @parent::query("INSERT INTO tag (recipeid, tag) VALUES ((SELECT recipeid FROM recipe WHERE identifier = '$ident'), '$tag')");
-      echo $addTag ? 'ye<br>' : 'na<br>';
     }
 
-    echo 'Add Ingredients:<br>';
     foreach ($ingredients as $place => $ingred) {
       $name = @parent::escape_string($ingred['name']);
       $amount = @parent::escape_string($ingred['amount']);
       $unit = @parent::escape_string($ingred['unit']);
       $addIngred = @parent::query("INSERT INTO ingredient (recipeid, place, name, amount, unit) VALUES ((SELECT recipeid FROM recipe WHERE identifier = '$ident'), '$place', '$name', '$amount', '$unit')");
-      echo $addIngred ? 'ye<br>' : 'na<br>';
     }
 
-    echo 'Add Preparation:<br>';
     foreach ($preparation as $step => $desc) {
       $desc = @parent::escape_string($desc);
       $addPrep = @parent::query("INSERT INTO preparation (recipeid, step, description) VALUES ((SELECT recipeid FROM recipe WHERE identifier = '$ident'), '$step', '$desc')");
-      echo $addPrep ? 'ye<br>' : 'na<br>';
+    }
+  }
+
+  function displayPreview($mysqli_query) {
+  if ($mysqli_query) {
+    $return = '';
+    while ($row_recipe = $mysqli_query->fetch_assoc()) {
+      $recipeid = $row_recipe['recipeid'];
+      $title = htmlspecialchars($row_recipe['name']);
+      $img = isset($row_recipe['imgpath']) ? $row_recipe['imgpath'] : 'assets/no_img.png';
+
+      $return_tags = '';
+
+      $getTags = @parent::query("SELECT tag FROM tag WHERE recipeid = $recipeid");
+      if ($getTags) {
+        while ($row_tag = $getTags->fetch_assoc()) {
+          $tag = htmlspecialchars($row_tag['tag']);
+          $return_tags .= "<span class='preview-tag'>$tag</span>";
+        }
+      }
+
+      $return .= <<<RETURN
+      <a href='recipe?id=$recipeid'>
+      <div class='grid-item' style='background-image: url("$img")'>
+          <div class='preview-title'>
+            $title
+          </div>
+          <div class='preview-tags'>
+            $return_tags
+          </div>
+        </div>
+        </a>
+RETURN;
+      }
+      return $return;
     }
   }
 
@@ -81,7 +109,7 @@ class DatabaseConnection extends mysqli {
     if (isset($_COOKIE['identifier'])) {
       return self::getUserID($_COOKIE['identifier']);
     } else {
-    return false;
+      return false;
     }
   }
 

@@ -1,11 +1,12 @@
 #sheet {
   padding: 20px 0 100px 0;
+  min-width: 600px;
   width: 50%;
   height: 100%;
   box-sizing: border-box;
   margin: 0 auto;
   display: grid;
-  grid-template-rows: 50px 150px auto;
+  grid-template-rows: 50px 100px auto;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px;
 }
@@ -19,4 +20,23 @@
 #sheet .search-bar input[type='text'] {
   width: 100%;
   max-width: none;
+}
+
+@media(max-width:900px) {
+  #sheet {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 10px 100px 10px;
+    grid-template-rows: 50px 50px auto;
+  }
+
+  #recipe-previews {
+    grid-template-columns: auto;
+  }
+}
+
+@media(max-width:550px) {
+  #sheet .grid-btn {
+    font-size: 5vw;
+  }
 }
