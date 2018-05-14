@@ -1,13 +1,5 @@
-#sheet {
-  padding: 20px 0 100px 0;
-  width: 50%;
-  height: 100%;
-  box-sizing: border-box;
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: 50px 150px auto;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
+#sheet.grid {
+  grid-template-rows: 50px;
 }
 
 #sheet .search-bar {
@@ -19,4 +11,10 @@
 #sheet .search-bar input[type='text'] {
   width: 100%;
   max-width: none;
+}
+
+@media(max-width: 900px) {
+  #sheet .search-bar {
+    grid-area: 1 / 1 / 1 / 4;
+  }
 }

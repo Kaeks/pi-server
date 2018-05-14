@@ -53,3 +53,17 @@ function addDesc() {
   `
   addElement('prep-inputs', 'div', 'prep' + prepId, 'prepstep', html);
 }
+
+function handleFileSelect(evt) {
+  var files = evt.target.files;
+  var f = files[0];
+  var reader = new FileReader();
+
+  reader.onload = (function(theFile) {
+    return function(e) {
+      document.querySelector("#img-preview").innerHTML = ['<img src="', e.target.result,'" title="', theFile.name, '"/>'].join('');
+    };
+  })(f);
+
+  reader.readAsDataURL(f);
+}

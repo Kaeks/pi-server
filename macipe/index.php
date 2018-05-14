@@ -12,7 +12,7 @@
   <?php require 'shared/header.php';?>
   <?php require 'shared/sidebar.php';?>
   <div id='content'>
-    <div id='sheet'>
+    <div id='sheet' class='grid'>
       <form class='search-bar' action="search" method="get">
         <input type="text" name="q" placeholder="Search" <?= isset($_GET['q']) ? 'value=\'' . htmlspecialchars($_GET['q']) . '\'' : ''?> autocomplete="off" required/>
         <button type="submit">

@@ -6,18 +6,23 @@
   padding-bottom: 100px;
 }
 
-#imgframe {
-  grid-area: 1 / 1 / 1 / 1;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 20px;
-  text-align: center;
+#upload-img {
+  margin: auto;
+  display: grid;
+  grid-template-rows: auto 40px;
 }
 
-#imgframe img {
-  width: 260px;
-  height: 260px;
+#img-preview {
+  width: 240px;
+  height: 240px;
+  margin: auto;
+  border-radius: 10px;
+  border: 5px dashed #E2E2E2;
+}
+
+#img-preview img {
+  width: 100%;
+  height: 100%;
   border-radius: 10px;
 }
 

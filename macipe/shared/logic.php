@@ -4,14 +4,27 @@ $db = new DatabaseConnection();
 function getSVG($svg) {
   $svg_list = [
     'home' => 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
-    'search' => 'M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z'
+    'newrecipe' => 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
+    'search' => 'M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z',
+    'confirm' => 'M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z'
   ];
   return $svg_list[$svg];
 }
 
 function getActive($link) {
+  $uri = $_SERVER['REQUEST_URI'];
   if ($link == 'index') {
-    return (strpos($_SERVER['REQUEST_URI'], '/index') !== false or $_SERVER['REQUEST_URI'] == '' or $_SERVER['REQUEST_URI'] == '/');
+    return (
+      strpos($uri, '/index') !== false
+      or
+      $uri == ''
+      or
+      $uri == '/'
+      or
+      substr($uri, -strlen('macipe/')) == 'macipe/'
+      or
+      substr($uri, -strlen('macipe')) == 'macipe'
+    );
   } else {
     return (strpos($_SERVER['REQUEST_URI'], "/$link") !== false);
   }
@@ -40,7 +53,7 @@ class DatabaseConnection extends mysqli {
 
   }
 
-  function newRecipe($userid, $name, $tags, $ingredients, $preparation) {
+  function newRecipe($userid, $name, $tags, $ingredients, $preparation, $imgfile = null) {
     $name = @parent::escape_string($name);
 
     $ident = randomString(16);
@@ -48,24 +61,62 @@ class DatabaseConnection extends mysqli {
       $ident = randomString(16);
     }
 
-    echo 'Add Recipe:<br>';
     $addRecipe = @parent::query("INSERT INTO recipe (userid, name, identifier) VALUES ('$userid', '$name', '$ident')");
+
+    $getRecipeId = @parent::query("SELECT recipeid FROM recipe WHERE identifier = '$ident'");
+    $recipeid = $getRecipeId->fetch_assoc()['recipeid'];
 
     foreach ($tags as $tag) {
       $tag = @parent::escape_string($tag);
-      $addTag = @parent::query("INSERT INTO tag (recipeid, tag) VALUES ((SELECT recipeid FROM recipe WHERE identifier = '$ident'), '$tag')");
+      $addTag = @parent::query("INSERT INTO tag (recipeid, tag) VALUES ('$recipeid', '$tag')");
     }
 
     foreach ($ingredients as $place => $ingred) {
       $name = @parent::escape_string($ingred['name']);
       $amount = @parent::escape_string($ingred['amount']);
       $unit = @parent::escape_string($ingred['unit']);
-      $addIngred = @parent::query("INSERT INTO ingredient (recipeid, place, name, amount, unit) VALUES ((SELECT recipeid FROM recipe WHERE identifier = '$ident'), '$place', '$name', '$amount', '$unit')");
+      $addIngred = @parent::query("INSERT INTO ingredient (recipeid, place, name, amount, unit) VALUES ('$recipeid', '$place', '$name', '$amount', '$unit')");
     }
 
     foreach ($preparation as $step => $desc) {
       $desc = @parent::escape_string($desc);
-      $addPrep = @parent::query("INSERT INTO preparation (recipeid, step, description) VALUES ((SELECT recipeid FROM recipe WHERE identifier = '$ident'), '$step', '$desc')");
+      $addPrep = @parent::query("INSERT INTO preparation (recipeid, step, description) VALUES ('$recipeid', '$step', '$desc')");
+    }
+
+    if (!is_null($imgfile)) {
+      self::updateImg($recipeid, $imgfile);
+    }
+  }
+
+  function updateImg($recipeid, $imgfile) {
+    $getIdent = @parent::query("SELECT identifier FROM recipe WHERE recipeid = $recipeid");
+    $ident = $getIdent->fetch_assoc()['identifier'];
+
+    $info = pathinfo($imgfile['name']);
+    $ext = $info['extension'];
+    $filename = $ident . '.' . $ext;
+    $targetdir = 'assets/imgs/';
+    $target = $targetdir . $filename;
+
+    // Check if recipe has an image associated to it already and deletes the image in case it has one.
+    $getImgPath = @parent::query("SELECT imgpath FROM recipe WHERE recipeid = $recipeid");
+    $db_imgpath = $getImgPath->fetch_assoc()['imgpath'];
+    if ($db_imgpath != 'assets/no_img.png' and file_exists($db_imgpath)) {
+      unlink($db_imgpath);
+    }
+
+    // Move the $imgfile to $target
+    if (move_uploaded_file($imgfile['tmp_name'], $target)) {
+      $setImgPath = @parent::query("UPDATE recipe SET imgpath = '$target' WHERE recipeid = $recipeid");
+      if ($setImgPath) {
+        return true;
+      } else {
+        echo 'Could not save path in database.';
+        return false;
+      }
+    } else {
+      echo 'Could not save uploaded file.';
+      return false;
     }
   }
 
@@ -101,7 +152,51 @@ class DatabaseConnection extends mysqli {
 RETURN;
       }
       return $return;
+    } else {
+      echo 'query err';
     }
+  }
+
+  function deleteRecipe($recipeid) {
+    return @parent::query("DELETE FROM recipe WHERE recipeid = $recipeid");
+  }
+
+  function cleanupRecipes() {
+    $deleted = array(
+      'tag' => 0,
+      'ingred' => 0,
+      'prep' => 0
+    );
+    $getTags = @parent::query("SELECT recipeid FROM tag");
+    while ($row_tag = $getTags->fetch_assoc()) {
+      $recipeid = $row_tag['recipeid'];
+      $getRecipe = @parent::query("SELECT recipeid FROM recipe WHERE recipeid = $recipeid");
+      if ($getRecipe->num_rows == 0) {
+        $deleteTags = @parent::query("DELETE FROM tag WHERE recipeid = $recipeid");
+        $deleted['tag']++;
+      }
+    }
+
+    $getIngreds = @parent::query("SELECT recipeid FROM ingredient");
+    while ($row_ingred = $getIngreds->fetch_assoc()) {
+      $recipeid = $row_ingred['recipeid'];
+      $getRecipe = @parent::query("SELECT recipeid FROM recipe WHERE recipeid = $recipeid");
+      if ($getRecipe->num_rows == 0) {
+        $deleteIngreds = @parent::query("DELETE FROM ingredient WHERE recipeid = $recipeid");
+        $deleted['ingred']++;
+      }
+    }
+
+    $getPrep = @parent::query("SELECT recipeid FROM preparation");
+    while ($row_prep = $getPrep->fetch_assoc()) {
+      $recipeid = $row_prep['recipeid'];
+      $getRecipe = @parent::query("SELECT recipeid FROM recipe WHERE recipeid = $recipeid");
+      if ($getRecipe->num_rows == 0) {
+        $deletePrep = @parent::query("DELETE FROM preparation WHERE recipeid = $recipeid");
+        $deleted['prep']++;
+      }
+    }
+    return $deleted;
   }
 
   function getCurUser() {

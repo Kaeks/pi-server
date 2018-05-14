@@ -47,12 +47,12 @@
     box-sizing: border-box;
     margin: 0 auto;
     display: grid;
-    grid-template-rows: repeat(4, 1fr);
+    grid-auto-rows: 75px;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
   }
 
-  #sheet .grid-elem {
+  .grid-btn {
     width: 100%;
     height: 100%;
     background: #42A5F5;
@@ -63,19 +63,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.2s;
+    transition: all 0.2s ease-in-out;
     color: #FFF;
-    font-size: 35px;
+    font-size: 1.5rem;
     font-weight: bold;
   }
 
-  #sheet .grid-elem:hover {
+  .grid-btn:hover {
     transform: translateY(-1px) translateX(-1px);
     border-bottom: 7px solid #1976D2;
     border-right: 7px solid #1976D2;
   }
 
-  #sheet .grid-elem:active {
+  .grid-btn:active {
     border: 0px solid #1976D2;
     transform: translateY(2px) translateX(2px);
   }
@@ -93,8 +93,8 @@
   </div>
   <div id='content'>
     <div id='sheet'>
-      <a href='macipe'><div class='grid-elem'>macipe</div></a>
-      <div class='grid-elem'>more coming!</div>
+      <a href='macipe'><div class='grid-btn'>macipe</div></a>
+      <div class='grid-btn'>more coming!</div>
     </div>
   </div>
 </body>
