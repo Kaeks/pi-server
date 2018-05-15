@@ -21,7 +21,7 @@ function addIngredient() {
     <input class="amt" name="amt` + ingredId + `" type="text" placeholder="Amount"/>
     <input class="unit" name="unit` + ingredId + `" type="text" placeholder="Unit"/>
     <input class="name" name="name` + ingredId + `" type="text" placeholder="Ingredient"/>
-    <button type="button" onclick="removeElement('ingred` + ingredId  + `');">-</button>
+    <button class="remove" type="button" onclick="removeElement('ingred` + ingredId  + `');">-</button>
   `;
   addElement('ingred-inputs', 'div', 'ingred' + ingredId, '', html);
 }
@@ -34,7 +34,7 @@ function addTag() {
   tagId++;
   var html = `
     <input class="tag" name="tag` + tagId + `" type="text" placeholder="Tag"/>
-    <button type="button" onclick="removeElement('tag` + tagId  + `');">-</button>
+    <button class="remove" type="button" onclick="removeElement('tag` + tagId  + `');">-</button>
   `;
   addElement('tag-inputs', 'div', 'tag' + tagId, '', html);
 }
@@ -49,7 +49,7 @@ function addDesc() {
   prepId++;
   var html = `
     <textarea class="prepdesc" name="desc` + prepId + `" placeholder="Description"></textarea>
-    <button type="button" onclick="removeElement('prep` + prepId  + `');">-</button>
+    <button class="remove" type="button" onclick="removeElement('prep` + prepId  + `');">-</button>
   `
   addElement('prep-inputs', 'div', 'prep' + prepId, 'prepstep', html);
 }
@@ -61,7 +61,7 @@ function handleFileSelect(evt) {
 
   reader.onload = (function(theFile) {
     return function(e) {
-      document.querySelector("#img-preview").innerHTML = ['<img src="', e.target.result,'" title="', theFile.name, '"/>'].join('');
+      document.querySelector("#img-preview").style.backgroundImage = "url(" + e.target.result + ")";
     };
   })(f);
 

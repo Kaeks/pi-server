@@ -55,7 +55,10 @@
     <form id='sheet' action='' method='post' enctype="multipart/form-data">
       <div id='upload-img'>
         <div id='img-preview'></div>
-        <input type='file' name='thumb'/>
+        <div class='upload-btn-wrapper'>
+          <button class='upload-btn' type='button'>Upload Image</button>
+          <input type='file' name='thumb'/>
+        </div>
       </div>
       <div id='ingreds'>
         <h1>Ingredients</h1>
@@ -66,16 +69,16 @@
             <input class='name' name='name0' type='text' placeholder='Ingredient' required/>
           </div>
         </div>
-        <button type='button' id='add-ingredient' onclick='addIngredient()'>+</button>
+        <button type='button' id='add-ingredient' class='add' onclick='addIngredient()'>+</button>
       </div>
       <div id='info'>
-        <input id='recipename' name='recipename' placeholder='Name' required/>
+        <input class='recipename' name='recipename' type='text' placeholder='Name' required/>
         <div id='tag-inputs'>
           <div id='tag0'>
             <input class='tag' name='tag0' type='text' placeholder='Tag'/>
           </div>
         </div>
-        <button type='button' id='add-tag' onclick='addTag()'>+</button>
+        <button type='button' id='add-tag' class='add' onclick='addTag()'>+</button>
       </div>
       <div id='preparation'>
         <h1>Preparation</h1>
@@ -84,7 +87,7 @@
             <textarea class='prepdesc' name='desc0' placeholder='Description' required></textarea>
           </div>
         </div>
-        <button type='button' id='add-desc' onclick='addDesc()'>+</button>
+        <button type='button' id='add-desc' class='add' onclick='addDesc()'>+</button>
       </div>
       <button class='floating-action-btn' type='submit' name='submit'>
         <svg viewBox="0 0 24 24">
@@ -96,7 +99,7 @@
 </body>
 <script>
 if (window.FileReader) {
-  document.querySelector('#upload-img > input[type="file"]').addEventListener('change', handleFileSelect, false);
+  document.querySelector('.upload-btn-wrapper > input[type="file"]').addEventListener('change', handleFileSelect, false);
 } else {
   console.log('This browser does not support FileReader.');
 }

@@ -42,8 +42,8 @@ a {
 }
 
 .floating-action-btn {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border: none;
   outline: none;
   border-radius: 100%;
@@ -54,6 +54,11 @@ a {
   position: fixed;
   right: 2vw;
   bottom: 12vh;
+}
+
+.floating-action-btn.small {
+  width: 56px;
+  height: 56px;
 }
 
 .floating-action-btn.mini {
