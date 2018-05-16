@@ -230,8 +230,15 @@ RETURN;
       }
     }
     if ($valid) { //identifier doesn't exist yet
+      echo 'is valid';
       $createIdentifier = @parent::query("UPDATE user SET identifier = '$identifier' WHERE userid = '$userid'");
+      if ($createIdentifier) {
+        echo 'yup';
+      } else {
+        echo 'nah';
+      }
     } else { // identifier already exists
+      echo 'exists already';
       self::createIdentifier();
     }
   }
@@ -252,8 +259,10 @@ RETURN;
     $getIdentifier = @parent::query("SELECT identifier FROM user WHERE userid = '$userid'");
     $row = $getIdentifier->fetch_assoc();
     if ($row['IDENTIFIER']) {
+      echo $row['IDENTIFIER'];
       return $row['IDENTIFIER'];
     } else { // user doesn't have identifier yet
+      echo 'doesnt have yet';
       self::createIdentifier($userid);
       self::getIdentifier($userid);
     }
@@ -265,6 +274,43 @@ RETURN;
         setcookie($key, '', 1);
       }
     }
+  }
+
+  function unameRequirements($username) {
+    require('credentials.php');
+    $msg = [];
+    if (strlen($username) == 0 or ctype_space($username) or $username == '') {
+      array_push($msg, "Username cannot be empty or only whitespace.");
+    }
+    if (strlen($username) > 20) {
+      array_push($msg, "Username must be at most 20 characters long.");
+    }
+    if (!preg_match('/^[a-zA-Z0-9_]*$/', $username)) {
+      array_push($msg, "Username can only contain alphanumeric characters (a-z, 0-9, _).");
+    }
+    if ($username != self::getUsername(self::getCurUser())) {
+      $checkExist = @parent::query("SELECT username FROM user WHERE UPPER(username) = UPPER('$username')");
+      if ($checkExist) {
+        if ($checkExist->num_rows > 0) {
+          array_push($msg, "Username already exists.");
+        }
+      }
+    }
+    return $msg;
+  }
+
+  function pwordRequirements($password) {
+    $msg = [];
+    if (strlen($password) < 6) {
+      array_push($msg, "Password must be at least 6 characters long.");
+    }
+    if (!(preg_match('/[A-Z]/', $password) && preg_match('/[a-z]/', $password))) {
+      array_push($msg, "Password must contain at least one lowercase <b>and</b> one uppercase character.");
+    }
+    if (!(preg_match('/[A-Za-z]/', $password) && preg_match('/[0-9]/', $password))) {
+      array_push($msg, "Password must contain at least one letter <i>(a-z)</i> <b>and</b> one number <i>(0-9)</i>.");
+    }
+    return $msg;
   }
 
   function auth() {
@@ -281,6 +327,44 @@ RETURN;
     }
     return false;
   }
+
+  function createNewUser($username, $password) {
+    $username = @parent::escape_string($username);
+    $password = @parent::escape_string($password);
+
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    if ($createUser = @parent::query("INSERT INTO user (username, password) VALUES ('$username','$hashed_password')")) {
+      $userid = @parent::query("SELECT userid FROM user WHERE username = '$username'")->fetch_assoc()['userid'];
+      self::createIdentifier($userid);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function login($username, $password) {
+    $msg = [];
+    if ($getInfo = @parent::query("SELECT identifier, password FROM user WHERE USERNAME = '$username'")) {
+      $row = $getInfo->fetch_assoc();
+      $dbPassword = $row['password'];
+      $identifier = $row['identifier'];
+      if (password_verify($password, $dbPassword)) {
+        //pass
+        setcookie('identifier', $identifier);
+        setcookie('hashed_password', $dbPassword);
+        header("Location: index");
+        return true;
+      } else {
+        //invalid
+        array_push($msg, "Invalid password or username");
+      }
+    } else {
+      //query error
+      array_push($msg, "Query error");
+    }
+    return $msg;
+  }
+
 }
 
 ?>

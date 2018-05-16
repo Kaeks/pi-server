@@ -1,0 +1,60 @@
+#sheet {
+  width: 300px;
+  margin: 0 auto;
+}
+
+#auth {
+  width: 100%;
+  /*height: 450px;*/
+  border: 1px solid #E2E2E2;
+  border-radius: 8px;
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.3);
+  padding: 10px 50px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+#auth h1 {
+}
+
+#auth > * {
+  margin-bottom: 20px;
+}
+
+#auth .username, #auth .password {
+  border: 2px solid #E2E2E2;
+  border-radius: 8px;
+  padding: 5px;
+  font-size: 0.9rem;
+}
+
+#auth .username {
+
+}
+
+#auth .password {
+
+}
+
+#auth .authbtn {
+  border: 4px solid #42A5F5;
+  border-radius: 8px;
+  background: #FFF;
+  color: #42A5F5;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#info-msg {
+  display: flex;
+  flex-direction: column;
+}
+
+#info-msg span {
+  color: #E00;
+  font-size: 0.7rem;
+  font-style: italic;
+}
