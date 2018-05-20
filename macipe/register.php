@@ -42,7 +42,7 @@
         <input class='username' type='text' name='username' placeholder='Username'/>
         <input class='password' type='password' name='password' placeholder='Password'/>
         <input class='password' type='password' name='passwordval' placeholder='Repeat Password'/>
-        <button class='authbtn' type='submit' name='registerbtn'>Register</button>
+        <button class='authbtn' type='submit' name='registerbtn'>register</button>
         <div id='info-msg'>
           <?php
           if (!empty($msg)) {

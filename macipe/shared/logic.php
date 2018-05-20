@@ -6,7 +6,8 @@ function getSVG($svg) {
     'home' => 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
     'newrecipe' => 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
     'search' => 'M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z',
-    'confirm' => 'M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z'
+    'confirm' => 'M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z',
+    'tag' => 'M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z'
   ];
   return $svg_list[$svg];
 }
@@ -28,6 +29,10 @@ function getActive($link) {
   } else {
     return (strpos($_SERVER['REQUEST_URI'], "/$link") !== false);
   }
+}
+
+function parseUnit($unit) {
+  return $unit == '<none>' ? '' : $unit;
 }
 
 // Returns a random string (0-9;a-Z;!;$;.) with length $length
@@ -72,9 +77,9 @@ class DatabaseConnection extends mysqli {
     }
 
     foreach ($ingredients as $place => $ingred) {
-      $name = @parent::escape_string($ingred['name']);
-      $amount = @parent::escape_string($ingred['amount']);
-      $unit = @parent::escape_string($ingred['unit']);
+      echo $amount = @parent::escape_string($ingred['amt']);
+      echo $unit = @parent::escape_string($ingred['unit']);
+      echo $name = @parent::escape_string($ingred['name']);
       $addIngred = @parent::query("INSERT INTO ingredient (recipeid, place, name, amount, unit) VALUES ('$recipeid', '$place', '$name', '$amount', '$unit')");
     }
 
@@ -137,18 +142,41 @@ class DatabaseConnection extends mysqli {
           $return_tags .= "<span class='preview-tag'>$tag</span>";
         }
       }
+      $getPrep = @parent::query("SELECT description FROM preparation WHERE recipeid = $recipeid");
+      $len = 0;
+      $prep = '';
+      while ($prep_r = $getPrep->fetch_assoc()['description']) {
+        if ($len != 0) {
+          $prep .= '<br>';
+        }
+        $prep .= $prep_r;
+        $len += strlen($prep_r);
+        if ($len >= 300) {
+          break;
+        }
+      }
+
+      $svgtag = getSVG('tag');
 
       $return .= <<<RETURN
-      <a href='recipe?id=$recipeid'>
-      <div class='grid-item' style='background-image: url("$img")'>
-          <div class='preview-title'>
-            $title
-          </div>
+      <a class='item' href='recipe?id=$recipeid'>
+        <div class='preview-img' style='background-image: url("$img")'></div>
+        <div class='preview-title'>
+          $title
+        </div>
+        <div class='preview-desc'>
           <div class='preview-tags'>
+            <svg viewBox='0 0 24 24'>
+              <path d='$svgtag'/>
+            </svg>
             $return_tags
           </div>
+          <div class='preview-prep'>
+            $prep...
+          </div>
+          <div class='fade'></div>
         </div>
-        </a>
+      </a>
 RETURN;
       }
       return $return;
@@ -199,7 +227,7 @@ RETURN;
     return $deleted;
   }
 
-  function getCurUser() {
+  function getCurUserID() {
     require('credentials.php');
     if (isset($_COOKIE['identifier'])) {
       return self::getUserID($_COOKIE['identifier']);
@@ -217,7 +245,7 @@ RETURN;
   }
 
   function checkSelf($userid) {
-    return ($userid == self::getCurUser()) ? true : false;
+    return ($userid == self::getCurUserID()) ? true : false;
   }
 
   function createIdentifier($userid) {
@@ -288,7 +316,7 @@ RETURN;
     if (!preg_match('/^[a-zA-Z0-9_]*$/', $username)) {
       array_push($msg, "Username can only contain alphanumeric characters (a-z, 0-9, _).");
     }
-    if ($username != self::getUsername(self::getCurUser())) {
+    if ($username != self::getUsername(self::getCurUserID())) {
       $checkExist = @parent::query("SELECT username FROM user WHERE UPPER(username) = UPPER('$username')");
       if ($checkExist) {
         if ($checkExist->num_rows > 0) {

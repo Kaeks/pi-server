@@ -1,8 +1,13 @@
 <?php
   require_once 'shared/logic.php';
 
+  if (!$db->auth()) {
+    header('Location: login');
+    exit();
+  }
+
   if (isset($_POST['submit']) and isset($_POST['recipename']) and isset($_POST['amt0']) and isset($_POST['unit0']) and isset($_POST['name0']) and isset($_POST['desc0'])) {
-    $userid = $db->getCurUser() ? $db->getCurUser() : 1;
+    $userid = $db->getCurUserID() ? $db->getCurUserID() : 1;
     $recipename = $db->escape_string($_POST['recipename']);
 
     $tags = $ingredients = $preparation = [];
@@ -37,6 +42,7 @@
       $db->newRecipe($userid, $recipename, $tags, $ingredients, $preparation);
     }
     header('Location: index');
+    exit();
   }
 
 ?>

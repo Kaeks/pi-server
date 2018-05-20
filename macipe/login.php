@@ -25,6 +25,20 @@
 <body>
   <?php require 'shared/header.php';?>
   <?php require 'shared/sidebar.php';?>
+  <?php
+  if ($db->auth()) {
+    // already logged in
+    // prompt to change user
+    ?>
+    <div id='overlay'>
+      <div class='popup'>
+        <p>You are already logged in.</p>
+        <p>Do you want to log out?</p>
+      </div>
+    </div>
+    <?php
+  }
+  ?>
   <div id='content'>
     <div id='sheet'>
       <form id='auth' action='' method='post'>
@@ -32,6 +46,12 @@
         <input class='username' type='text' name='username' placeholder='Username'/>
         <input class='password' type='password' name='password' placeholder='Password'/>
         <button class='authbtn' type='submit' name='loginbtn'>log in</button>
+        <span class='no-acc'>
+          No account yet?
+          <a href='register'>
+            Register here!
+          </a>
+        </span>
         <div id='info-msg'>
           <?php
           if (!empty($msg)) {

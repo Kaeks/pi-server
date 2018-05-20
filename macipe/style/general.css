@@ -15,6 +15,11 @@ body {
   grid-row-gap: 5px;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 #header {
   position: fixed;
   top: 0;
@@ -29,16 +34,69 @@ body {
   justify-content: space-between;
   grid-area: 1 / 1 / 1 / 2;
   color: #FFF;
-  background: #FFA726;
-  border-bottom: 5px solid #FB8C00;
+  background: #26A69A;
+  border-bottom: 5px solid #00766C;
 }
 
-#header h1 a {
+#macipe-logo {
+  font-family: 'Average';
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+#btn-holder {
+  float: left;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+#logged-as a {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.primary-btn, .secondary-btn {
+  border: 4px solid #000;
+  border-radius: 8px;
+  outline: none;
+  font-weight: bold;
+  padding: 2px 15px;
+  box-sizing: border-box;
+  height: 32px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primary-btn {
+  background: #000;
   color: #FFF;
 }
 
-a {
-  text-decoration: none;
+.secondary-btn {
+  background: #FFF;
+  color: #000;
+}
+
+a.primary-btn, a.secondary-btn {
+  color: inherit;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.primary-btn.color-primary, .secondary-btn.color-primary {border-color: #26A69A;}
+.primary-btn.color-secondary, .secondary-btn.color-secondary {border-color: #6D4C41;}
+.primary-btn.color-primary {background: #26A69A;}
+.primary-btn.color-secondary {background: #6D4C41;}
+.secondary-btn.color-primary {color: #26A69A;}
+.secondary-btn.color-secondary {color: #6D4C41;}
+
+.primary-btn:hover, .secondary-btn:hover {
+  transform: translateY(-1px);
+}
+
+.primary-btn:active, .secondary-btn:active {
+  transform: translateY(1px);
 }
 
 .floating-action-btn {
@@ -47,7 +105,7 @@ a {
   border: none;
   outline: none;
   border-radius: 100%;
-  background: #42A5F5;
+  background: #26A69A;
   box-shadow: 0 3px 6px rgba(0,0,0,0.35);
   transition: 0.15s;
   cursor: pointer;
@@ -84,7 +142,8 @@ a {
 }
 
 .search-bar {
-  margin-right: 6vw;
+  float: right;
+  margin-right: 5vw;
 }
 
 .search-bar input[type=text] {
@@ -93,7 +152,7 @@ a {
   width: 25vw;
   min-width: 150px;
   padding: 6px;
-  margin-top: 8px;
+  margin-top: 0;
   font-size: 17px;
   border-radius: 8px 0 0 8px;
   outline: none;
@@ -105,8 +164,8 @@ a {
   padding: 3px;
   width: 32px;
   height: 32px;
-  margin-top: 8px;
-  background: #42A5F5;
+  margin-top: 0;
+  background: #6D4C41;
   font-size: 17px;
   border: none;
   cursor: pointer;
@@ -117,17 +176,17 @@ a {
 .search-bar button svg {
   width: 100%;
   height: 100%;
-  fill: #000;
+  fill: #FFF;
 }
 
 .search-bar button:hover {
-  background: #1976D2;
+  background: #40241A;
 }
 
 #content {
   grid-area: 2 / 2 / 2 / 2;
   overflow-x: hidden;
-  padding-top: 20px;
+  padding-top: 5px;
 }
 
 #sidebar {
@@ -166,12 +225,12 @@ a {
 }
 
 .sidebar-elem:hover {
-  background: #FFE0B2;
+  background: #B2FEF7;
 }
 
 .sidebar-elem[status='active'] {
   box-shadow: none;
-  background: #FFB74D;
+  background: #64D8CB;
 }
 
 .sidebar-elem[status='active'] + .sidebar-elem {
@@ -198,18 +257,43 @@ a {
   width: 100vw;
   height: 50px;
   color: #FFF;
-  background: #FFA726;
-  border-top: 5px solid #FB8C00;
+  background: #26A69A;
+  border-top: 5px solid #00766C;
 }
 
 #navbar {
   display: none;
 }
 
+#overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+#overlay .popup {
+  min-width: 300px;
+  width: 40vw;
+  height: 300px;
+  margin: 100px auto;
+  padding: 20px 40px;
+  box-sizing: border-box;
+  background: #FFF;
+  border: 1px solid #E2E2E2;
+  border-radius: 8px;
+  box-shadow: 0 0 6px 4px rgba(0, 0, 0, 0.3);
+}
+
 #sheet.grid {
   padding: 20px 0 100px 0;
-  min-width: 610px;
-  width: 50%;
+  min-width: 650px;
+  width: 80%;
+  max-width: 900px;
   height: 100%;
   box-sizing: border-box;
   margin: 0 auto;
@@ -221,10 +305,9 @@ a {
 #recipe-previews {
   grid-column: 1 / 4;
   display: grid;
-  grid-auto-rows: 200px;
-  grid-template-columns: repeat(2, 300px);
-  grid-gap: 10px;
-  margin: 0 auto;
+  grid-auto-rows: 170px;
+  grid-gap: 15px;
+  margin: 0 0;
   border-radius: 5px;
   font-size: 0.8rem;
 }
@@ -233,45 +316,93 @@ a {
   color: #FFF;
 }
 
-#recipe-previews .grid-item {
-  background: #E7E7E7;
+#recipe-previews .item {
+  background: #FFF;
   display: grid;
-  grid-template-rows: 0.5fr 2fr 0.5fr;
-  width: 300px;
-  height: 200px;
-  background-position: center;
-  background-size: cover;
+  grid-column: 1 / 2;
+  grid-template-rows: 0.5fr 2.5fr;
+  grid-template-columns: 255px auto;
   border-radius: 5px;
   transition: all 0.2s ease-in-out;
   box-shadow: 6px 6px 7px -3px rgba(0, 0, 0, 0.2);
 }
 
-#recipe-previews .grid-item:hover {
+#recipe-previews .item:hover {
   transform: translateY(-2px);
 }
 
-#recipe-previews .grid-item:active {
+#recipe-previews .item:active {
   transform: translateY(2px);
 }
 
+#recipe-previews .preview-img {
+  grid-row: 1 / 3;
+  width: 255px;
+  height: 170px;
+  background-position: center;
+  background-size: cover;
+  border: 1px solid #E2E2E2;
+  border-right: none;
+  border-radius: 5px 0 0 5px;
+  box-sizing: border-box;
+}
+
 #recipe-previews .preview-title {
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 5px;
+  background: #26A69A;
+  border-bottom: 2px solid #00766C;
+  border-radius: 0 5px 0 0;
+  font-family: 'Georgia';
   padding: 5px;
   box-sizing: border-box;
+}
+
+#recipe-previews .preview-desc {
+  grid-area: 2 / 2 / 2 / 2;
+  padding: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-left: 1px solid #E2E2E2;
 }
 
 #recipe-previews .preview-tags {
-  grid-area: 3 / 1 / 3 / 1;
-  padding: 5px;
-  box-sizing: border-box;
+}
+
+#recipe-previews .preview-prep {
+  position: relative;
+  margin-top: 10px;
+  color: #000;
+  overflow: hidden;
+  height: 95px;
+}
+
+#recipe-previews .preview-prep:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+}
+
+.preview-tags svg {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
+.preview-tags svg path {
+  fill: #004D40;
 }
 
 #recipe-previews .preview-tag {
-  background: rgba(0, 0, 0, 0.6);
+  color: #006759;
+  font-style: italic;
   border-radius: 5px;
   box-sizing: border-box;
   padding: 2px;
+  vertical-align: middle;
 }
 
 #recipe-previews .preview-tag + .preview-tag {
@@ -281,9 +412,9 @@ a {
 .grid-btn {
   width: 100%;
   height: 100%;
-  background: #42A5F5;
-  border-bottom: 5px solid #1976D2;
-  border-right: 5px solid #1976D2;
+  background: #26A69A;
+  border-bottom: 5px solid #00766C;
+  border-right: 5px solid #00766C;
   border-radius: 5px;
   box-sizing: border-box;
   display: flex;
@@ -297,12 +428,12 @@ a {
 
 .grid-btn:hover {
   transform: translateY(-1px) translateX(-1px);
-  border-bottom: 7px solid #1976D2;
-  border-right: 7px solid #1976D2;
+  border-bottom-width: 7px;
+  border-right-width: 7px;
 }
 
 .grid-btn:active {
-  border: 0px solid #1976D2;
+  border: 0px solid #00766C;
   transform: translateY(2px) translateX(2px);
 }
 
@@ -319,7 +450,7 @@ a {
     grid-template-rows: minmax(55px, 8vh) auto 50px;
   }
 
-  #header h1 {
+  #macipe-logo {
     font-size: 1.25rem;
   }
 
@@ -338,13 +469,15 @@ a {
   #sheet.grid {
     width: 100%;
     min-width: 0;
-    padding: 20px 10px 100px 10px;
+    padding: 0 10px 100px 10px;
   }
-}
 
-@media(max-width: 610px) {
-  #recipe-previews {
-    grid-template-columns: 300px;
+  #btn-holder {
+    margin-right: 5vw;
+  }
+
+  #header .search-bar {
+    display: none;
   }
 }
 
