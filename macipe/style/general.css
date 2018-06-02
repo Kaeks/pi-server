@@ -483,6 +483,6 @@ a.primary-btn, a.secondary-btn {
 
 @media(max-width: 550px) {
   #sheet.grid .grid-btn {
-    font-size: 5vw;
+    font-size: 4.5vw;
   }
 }

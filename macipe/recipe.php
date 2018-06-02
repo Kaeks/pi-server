@@ -62,6 +62,18 @@ RETURN;
       </div>
       <div id='preparation'>
         <h1>Preparation</h1>
+        <?php
+        $return = '';
+        while ($row_p = $getPrep->fetch_assoc()) {
+          $desc = $row_p['description'];
+          $return .= <<<RETURN
+          <p>
+            $desc
+          </p>
+RETURN;
+        }
+        echo $return;
+        ?>
       </div>
     </div>
   </div>
