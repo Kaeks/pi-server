@@ -7,6 +7,17 @@
     exit();
   }
 
+  if ($db->checkAdmin($db->getCurUserID()) and isset($_GET['remove'])) {
+    if ($_GET['remove'] == 'true') {
+      $recipeid = $db->escape_string($_GET['id']);
+      $db->deleteRecipe($recipeid);
+      header("Location: index");
+      exit();
+    } else {
+    }
+  } else {
+  }
+
   $getRecipe = $db->query("SELECT R.userid, R.name, R.imgpath, U.username FROM recipe R INNER JOIN user U ON R.userid = U.userid WHERE R.recipeid = $recipeid");
   $row = $getRecipe->fetch_assoc();
   $userid = $row['userid'];
@@ -77,6 +88,21 @@ RETURN;
       </div>
     </div>
   </div>
+  <button id='fab-remove' class='floating-action-btn'>
+    <svg viewBox="0 0 24 24">
+      <path d='<?= getSVG('confirm');?>'/>
+    </svg>
+  </button>
 </body>
-</body>
+<script>
+  var btn = document.getElementById("fab-remove");
+  btn.onclick = function() {
+    var result = confirm("Want to delete?");
+    if (result) {
+      window.location='recipe?id=<?=$recipeid?>&remove=true';
+    } else {
+      return false;
+    }
+  }
+</script>
 </html>

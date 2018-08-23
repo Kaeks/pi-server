@@ -248,6 +248,10 @@ RETURN;
     return ($userid == self::getCurUserID()) ? true : false;
   }
 
+  function checkAdmin($userid) {
+    return @parent::query("SELECT admin FROM user WHERE userid = '$userid'")->fetch_assoc()['admin'] == 1;
+  }
+
   function createIdentifier($userid) {
     $identifier = randomString(32);
     $checkExist = @parent::query("SELECT identifier FROM user WHERE identifier = '$identifier'");
