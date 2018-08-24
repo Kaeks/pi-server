@@ -86,6 +86,31 @@ hr {
   letter-spacing: 1.5px;
 }
 
+#tags svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+#tags svg path {
+  fill: #004D40;
+}
+
+#tags a.tag {
+  display: inline-block;
+  vertical-align: bottom;
+  color: #333;
+  font-style: italic;
+}
+
+a.tag + a.tag {
+  margin-left: 10px;
+}
+
+#tags a.tag:hover {
+  text-decoration: underline;
+}
+
 #preparation {
   grid-area: 3 / 3 / 3 / 3;
   box-sizing: border-box;

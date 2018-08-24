@@ -47,6 +47,19 @@
       <div id='recipe-img' style='background-image: url("<?= $imgpath?>")'></div>
       <div id='info'>
         <span class='recipename'><?= $recipename?></span>
+        <div id='tags'>
+          <svg viewBox='0 0 24 24'>
+            <path d='<?=getSVG('tag')?>'/>
+          </svg>
+          <?php
+          $tagList = '';
+          while($row_t = $getTags->fetch_assoc()) {
+            $tag = htmlspecialchars($row_t['tag']);
+            $tagList .= "<a class='tag' href='search?q=$tag'>$tag</a>";
+          }
+          echo $tagList;
+          ?>
+        </div>
       </div>
       <hr>
       <div id='ingreds'>
@@ -88,11 +101,13 @@ RETURN;
       </div>
     </div>
   </div>
+  <?php if ($db->checkAdmin($db->getCurUserID())) {?>
   <button id='fab-remove' class='floating-action-btn'>
     <svg viewBox="0 0 24 24">
-      <path d='<?= getSVG('confirm');?>'/>
+      <path d='<?= getSVG('remove');?>'/>
     </svg>
   </button>
+  <?php }?>
 </body>
 <script>
   var btn = document.getElementById("fab-remove");
